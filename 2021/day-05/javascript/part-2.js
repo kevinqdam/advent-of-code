@@ -10,7 +10,6 @@ const intFromStr = str => parseInt(str, 10);
 const map = fn => arr => arr.map(fn);
 const isHorizontal = ([[x0, y0], [x1, y1]]) => (x0 === x1);
 const isVertical = ([[x0, y0], [x1, y1]]) => (y0 === y1);
-const or = (...args) => args.reduce((acc, x) => acc || x, false);
 const getMaxXCoord = lines => lines.reduce((acc, [[x0, y0], [x1, y1]]) => Math.max(acc, x0, x1), lines[0][0][0]);
 const getMaxYCoord = lines => lines.reduce((acc, [[x0, y0], [x1, y1]]) => Math.max(acc, y0, y1), lines[0][0][1]);
 const count = pred => arr => arr.reduce((acc, x) => (pred(x) ? (acc + 1) : acc ), 0);
