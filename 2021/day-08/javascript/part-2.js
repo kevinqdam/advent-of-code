@@ -4,10 +4,16 @@ const input = fs.readFileSync('./input.txt').toString().trim();
 
 const pipe = value => ({ value, to: fn => pipe(fn(value)) });
 const map = fn => arr => arr.map(fn);
+const getFromMap = map => key => map.get(key);
+const getFromObj = obj => key => obj[key];
+const sort = comp => arr => arr.sort(comp);
+const joinByEmpty = str => str.join('');
+const splitByEmpty = str => str.split('');
 const splitByNewLine = str => str.split('\n');
 const splitByPipe = str => str.split('|');
 const splitBySpace = str => str.split(' ');
 const trim = str => str.trim();
+const intFromString = str => parseInt(str, 10);
 const sum = nums => nums.reduce((a, b) => a + b, 0);
 const DISPLAY_VALUES = {
   abcefg: 0,
@@ -148,16 +154,20 @@ const createSignalMap = (function () {
 }());
 
 const getSignalMap = ([ signals, outputs ]) => [ createSignalMap(signals), outputs ];
-const outputsToValue = ([ signalMap, outputs ]) => parseInt(
-    outputs.map(str => str.split('').map(letter => signalMap.get(letter)).sort().join(''))
-      .map(key => DISPLAY_VALUES[key])
-      .join(''),
-    10,
-  );
+const getValue = ([ signalMap, outputs ]) => pipe(outputs)
+  .to(map(splitByEmpty))
+  .to(map(map(getFromMap(signalMap))))
+  .to(map(sort()))
+  .to(map(joinByEmpty))
+  .to(map(getFromObj(DISPLAY_VALUES)))
+  .to(joinByEmpty)
+  .to(intFromString)
+  .value;
 
 const processLines = lines => pipe(lines)
   .to(map(getSignalMap))
-  .to(map(outputsToValue)).value;
+  .to(map(getValue))
+  .value;
 
 const parse = (text) => pipe(text)
   .to(splitByNewLine)
